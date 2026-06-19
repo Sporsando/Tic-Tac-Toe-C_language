@@ -319,24 +319,7 @@ void playerMove(struct currentGameData *gameData, struct PlayingField *playingFi
         playerMove(gameData, playingField);
         break;
     }
-    /*
-    if (playingField->availableFields[gameData->selectedRow][gameData->selectedColumn] == '0') //checks is place is available
-    {
-        printf("\n");
-        playingField->field[gameData->selectedRow][gameData->selectedColumn] = '?';
-        printf("%sPlace is available!\n", slashTFormat);
-        printCurrentField(playingField);
 
-        selectConfirmChoice(gameData, playingField, 0);
-
-    } else
-    {
-        printf("%sPlace is unavailable!\n", slashTFormat);
-        printCurrentField(playingField);
-        playerMove(gameData, playingField);
-
-    }
-    */
 
 
 }
