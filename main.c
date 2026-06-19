@@ -7,6 +7,15 @@
 #define messageSelectCorrectChoice printf("%sSelect correct option (0 or 1)!\n", slashTFormat)
 #define messageSelectCorrectRow printf("%sSelect correct row (1-3)!\n", slashTFormat)
 #define messageSelectCorrectColumn printf("%sSelect correct column (1-3)!\n", slashTFormat)
+#define messageIconsSelected if (gameData->selectedGameType == 1) \
+                { \
+                    printf("%sYou are playing %c side!\n", slashTFormat, gameData->selectedPlayer1Icon); \
+                } else \
+                { \
+                    printf("%sFirst player are playing %c side!\n", slashTFormat, gameData->selectedPlayer1Icon); \
+                    printf("%sSecond player are playing %c side!\n", slashTFormat, gameData->selectedPlayer2Icon); \
+                } \
+                printf("\n");
 #define playerTurnNegation gameData->playerTurn = !gameData->playerTurn
 #define startRecursionIcon messageSelectCorrectIcon; \
                 currentRecursionState += 1; \
@@ -28,7 +37,7 @@
         currentChoiceRecursionState += 1; \
         selectConfirmChoice(gameData, playingField, currentChoiceRecursionState); \
         currentChoiceRecursionState -= 1;
-#define winMessageParameter(winIcon) winMessage(&gameData->gameEnd, (winIcon), gameData->selectedPlayer1Icon); \
+#define winMessageParameter(winIcon) winMessage(gameData, (winIcon), gameData->selectedPlayer1Icon); \
             break;
 
 
@@ -118,7 +127,6 @@ void chooseGameType(struct currentGameData *gameData, int currentRecursionState)
     printf("%sChoose game type:\n", slashTFormat);
     printf("%s1. Play with computer\n", slashTFormat);
     printf("%s2. Play with another player\n", slashTFormat);
-
     printf("%s", slashTFormat);
 
 
@@ -158,6 +166,8 @@ void chooseGameType(struct currentGameData *gameData, int currentRecursionState)
 }
 
 
+
+
 void selectIcon(struct currentGameData *gameData, int currentRecursionState)
 {
     printSlashNInRecursive(currentRecursionState);
@@ -178,14 +188,12 @@ void selectIcon(struct currentGameData *gameData, int currentRecursionState)
             case 'X':
                 gameData->selectedPlayer1Icon = 'X';
                 gameData->selectedPlayer2Icon = 'O';
-                printf("%sYou are playing X side!\n", slashTFormat);
-                printf("\n");
+                messageIconsSelected
                 break;
             case 'O':
                 gameData->selectedPlayer1Icon = 'O';
                 gameData->selectedPlayer2Icon = 'X';
-                printf("%sYou are playing O side!\n", slashTFormat);
-                printf("\n");
+                messageIconsSelected
                 break;
             default:
                 startRecursionIcon
@@ -262,6 +270,15 @@ void selectColumn(struct currentGameData *gameData, struct PlayingField *playing
     }
 }
 
+char changeTurnPlayerIcon(struct currentGameData *gameData)
+{
+    if (gameData->playerTurn == 1)
+    {
+        return gameData->selectedPlayer1Icon;
+    }
+    return gameData->selectedPlayer2Icon;
+}
+
 void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *playingField, int currentChoiceRecursionState)
 {
     printSlashNInRecursive(currentChoiceRecursionState);
@@ -285,7 +302,7 @@ void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *
                 break;
             case '1':
                 printf("\n");
-                playingField->field[gameData->selectedRow][gameData->selectedColumn] = gameData->selectedPlayer1Icon;
+                playingField->field[gameData->selectedRow][gameData->selectedColumn] = changeTurnPlayerIcon(gameData);
                 playingField->availableFields[gameData->selectedRow][gameData->selectedColumn] = '1';
                 printf("%sIcon placed!\n", slashTFormat);
                 printCurrentField(playingField);
@@ -302,6 +319,9 @@ void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *
         }
     }
 }
+
+
+
 
 void playerMove(struct currentGameData *gameData, struct PlayingField *playingField) //this function will be called if this is player1Turn or player2Turn (when game with other player)
 {
@@ -405,15 +425,27 @@ void restartField(struct PlayingField *playingField) //for now it has debug prin
     }
 }
 
-void winMessage(int *gameEndBool, char iconToCheck, char iconCondition)
+void winMessage(struct currentGameData *gameData, char iconToCheck, char iconCondition)
 {
-    *gameEndBool = 1;
-    if (iconToCheck == iconCondition)
+    gameData->gameEnd = 1;
+    if (gameData->selectedGameType == 1)
     {
-        printf("%sPlayer 1 win!\n", slashTFormat);
+        if (iconToCheck == iconCondition)
+        {
+            printf("%sYou win!\n", slashTFormat);
+        } else
+        {
+            printf("%sComputer win!\n", slashTFormat);
+        }
     } else
     {
-        printf("%sPlayer 2 win!\n", slashTFormat);
+        if (iconToCheck == iconCondition)
+        {
+            printf("%sFirst player win!\n", slashTFormat);
+        } else
+        {
+            printf("%sSecond player win!\n", slashTFormat);
+        }
     }
 }
 
@@ -496,8 +528,6 @@ void checkForEnding(struct currentGameData *gameData, struct PlayingField *playi
         }
     }
 
-
-
 }
 
 int main()
@@ -536,12 +566,13 @@ int main()
         {
             if (gameData.playerTurn == 1)
             {
+                printf("%sFirst player move!\n", slashTFormat);
                 playerMove(&gameData, &playingField);
             } else
             {
                 //another player move
-                printf("%sAnother player move!\n", slashTFormat);
-                gameData.playerTurn = 1; // when another player placed his icon the turn goes to first player
+                printf("%Second player move!\n", slashTFormat);
+                playerMove(&gameData, &playingField); // when second player placed his icon the turn goes to first player
             }
         }
 
