@@ -28,6 +28,8 @@
         currentChoiceRecursionState += 1; \
         selectConfirmChoice(gameData, playingField, currentChoiceRecursionState); \
         currentChoiceRecursionState -= 1;
+#define winMessageParameter(winIcon) winMessage(&gameData->gameEnd, (winIcon), gameData->selectedPlayer1Icon); \
+            break;
 
 
 const char slashTFormat[] = "\t\t";
@@ -425,24 +427,6 @@ void checkForIdenticIcon(char currentIcon, char anotherIcon, int *variableToChan
 
 void checkForEnding(struct currentGameData *gameData, struct PlayingField *playingField)
 {
-    //Check for draw
-    int counterOne = 0;
-    for (int i = 0; i < playingField->countRowsPlayingField; ++i)
-    {
-        for (int j = 0; j < playingField->rowPlayingField; ++j)
-        {
-            if (playingField->availableFields[i][j] == '1')
-            {
-                counterOne += 1;
-            }
-        }
-    }
-    if (counterOne == playingField->countRowsPlayingField * playingField->rowPlayingField)
-    {
-        gameData->gameEnd = 1;
-    }
-
-
     //Checking for somebody win
 
     char columnWinArray[playingField->countRowsPlayingField];
@@ -476,22 +460,42 @@ void checkForEnding(struct currentGameData *gameData, struct PlayingField *playi
 
         if (diagonalWin == 2)
         {
-            winMessage(&gameData->gameEnd, diagonalWinArray[0], gameData->selectedPlayer1Icon);
-            break;
+            winMessageParameter(diagonalWinArray[0])
         }
 
         if (columnWin == 2)
         {
-            winMessage(&gameData->gameEnd, columnWinArray[0], gameData->selectedPlayer1Icon);
-            break;
+            winMessageParameter(columnWinArray[0])
         }
 
         if (rowWin == 2)
         {
-            winMessage(&gameData->gameEnd, playingField->field[i][0], gameData->selectedPlayer1Icon);
-            break;
+            winMessageParameter(playingField->field[i][0])
         }
     }
+
+    //Check for draw
+    if (gameData->gameEnd == 0)
+    {
+
+        int counterOne = 0;
+        for (int i = 0; i < playingField->countRowsPlayingField; ++i)
+        {
+            for (int j = 0; j < playingField->rowPlayingField; ++j)
+            {
+                if (playingField->availableFields[i][j] == '1')
+                {
+                    counterOne += 1;
+                }
+            }
+        }
+        if (counterOne == playingField->countRowsPlayingField * playingField->rowPlayingField)
+        {
+            printf("%sDraw!\n", slashTFormat);
+            gameData->gameEnd = 1;
+        }
+    }
+
 
 
 }
