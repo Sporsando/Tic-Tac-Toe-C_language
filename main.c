@@ -2,18 +2,31 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define messageSelectCorrectIcon printf("%sSelect correct icon (X or O)!\n", slashTFormat)
-#define messageSelectCorrectOption printf("%sSelect correct option (1 or 2)!\n", slashTFormat)
-#define messageSelectCorrectChoice printf("%sSelect correct option (0 or 1)!\n", slashTFormat)
-#define messageSelectCorrectRow printf("%sSelect correct row (1-3)!\n", slashTFormat)
-#define messageSelectCorrectColumn printf("%sSelect correct column (1-3)!\n", slashTFormat)
+
+#define turnOnColoredText(colorNumber) printf("\033[%dm", (colorNumber))
+#define turnOffAnyColor printf("\033[0m")
+#define messageSelectCorrectIcon turnOnColoredText(31); \
+        printf("%sSelect correct icon (X or O)!\n", slashTFormat); \
+        turnOffAnyColor
+#define messageSelectCorrectOption turnOnColoredText(31); \
+        printf("%sSelect correct option (1 or 2)!\n", slashTFormat); \
+        turnOffAnyColor
+#define messageSelectCorrectChoice turnOnColoredText(31); \
+        printf("%sSelect correct option (0 or 1)!\n", slashTFormat); \
+        turnOffAnyColor
+#define messageSelectCorrectRow turnOnColoredText(31); \
+        printf("%sSelect correct row (1-3)!\n", slashTFormat); \
+        turnOffAnyColor
+#define messageSelectCorrectColumn turnOnColoredText(31); \
+        printf("%sSelect correct column (1-3)!\n", slashTFormat); \
+        turnOffAnyColor
 #define messageIconsSelected if (gameData->selectedGameType == 1) \
                 { \
-                    printf("%sYou are playing %c side!\n", slashTFormat, gameData->selectedPlayer1Icon); \
+                    printf("%sYou are playing \033[33m%c\033[0m side!\n", slashTFormat, gameData->selectedPlayer1Icon); \
                 } else \
                 { \
-                    printf("%sFirst player are playing %c side!\n", slashTFormat, gameData->selectedPlayer1Icon); \
-                    printf("%sSecond player are playing %c side!\n", slashTFormat, gameData->selectedPlayer2Icon); \
+                    printf("%s\033[33mFirst\033[0m player are playing \033[33m%c\033[0m side!\n", slashTFormat, gameData->selectedPlayer1Icon); \
+                    printf("%s\033[33mSecond\033[0m player are playing \033[33m%c\033[0m side!\n", slashTFormat, gameData->selectedPlayer2Icon); \
                 } \
                 printf("\n");
 #define playerTurnNegation gameData->playerTurn = !gameData->playerTurn
@@ -39,6 +52,7 @@
         currentChoiceRecursionState -= 1;
 #define winMessageParameter(winIcon) winMessage(gameData, (winIcon), gameData->selectedPlayer1Icon); \
             break;
+
 
 
 const char slashTFormat[] = "\t\t";
@@ -84,13 +98,15 @@ void fitArrayIndexPlusOne(char arrayToFit[], int lengthArrayToFit)
 }
 
 
-void printCurrentField(struct PlayingField *playingField);
+void printCurrentField(struct PlayingField *playingField, struct currentGameData *gameData);
 void playerMove(struct currentGameData *gameData, struct PlayingField *playingField);
 
 void startGreeting()
 {
     printf("\n\n\n");
+    turnOnColoredText(1);
     printf("%sTic-Tac-Toe game!\n", slashTFormat);
+    turnOffAnyColor;
 }
 
 int in(char string[], int stringLength, char characterToCheck)
@@ -124,13 +140,16 @@ void clearStdin()
 void chooseGameType(struct currentGameData *gameData, int currentRecursionState)
 {
     printSlashNInRecursive(currentRecursionState);
+    turnOnColoredText(32);
     printf("%sChoose game type:\n", slashTFormat);
+    turnOffAnyColor;
     printf("%s1. Play with computer\n", slashTFormat);
     printf("%s2. Play with another player\n", slashTFormat);
     printf("%s", slashTFormat);
 
-
+    turnOnColoredText(33);
     char inputChar = getchar();
+    turnOffAnyColor;
     if (inputChar == '\n')
     {
         startRecursionOption
@@ -171,11 +190,14 @@ void chooseGameType(struct currentGameData *gameData, int currentRecursionState)
 void selectIcon(struct currentGameData *gameData, int currentRecursionState)
 {
     printSlashNInRecursive(currentRecursionState);
+    turnOnColoredText(32);
     printf("%sEnter icon to play (X or O):\n", slashTFormat);
-
+    turnOffAnyColor;
     printf("%s", slashTFormat);
 
+    turnOnColoredText(33);
     char inputChar = getchar();
+    turnOffAnyColor;
     if (inputChar == '\n')
     {
         startRecursionIcon
@@ -212,9 +234,9 @@ void selectRow(struct currentGameData *gameData, struct PlayingField *playingFie
     printSlashNInRecursive(currentRowRecursionState);
     printf("%sEnter row to place your icon (1-3):\n", slashTFormat);
     printf("%s", slashTFormat);
-
+    turnOnColoredText(33);
     char row = getchar();
-
+    turnOffAnyColor;
     if (row == '\n')
     {
         startRecursionRow
@@ -244,8 +266,9 @@ void selectColumn(struct currentGameData *gameData, struct PlayingField *playing
     printSlashNInRecursive(currentColumnRecursionState);
     printf("%sEnter column to place your icon (1-3):\n", slashTFormat);
     printf("%s", slashTFormat);
+    turnOnColoredText(33);
     char column = getchar();
-
+    turnOffAnyColor;
     if (column == '\n')
     {
         startRecursionColumn
@@ -282,10 +305,13 @@ char changeTurnPlayerIcon(struct currentGameData *gameData)
 void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *playingField, int currentChoiceRecursionState)
 {
     printSlashNInRecursive(currentChoiceRecursionState);
+    turnOnColoredText(32);
     printf("%sConfirm choice? (0 or 1)\n", slashTFormat);
+    turnOffAnyColor;
     printf("%s", slashTFormat);
+    turnOnColoredText(33);
     char confirmChoice = getchar();
-
+    turnOffAnyColor;
     if (confirmChoice == '\n')
     {
         startRecursionConfirmChoice
@@ -297,15 +323,17 @@ void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *
             {
             case '0':
                 playingField->field[gameData->selectedRow][gameData->selectedColumn] = '*';
-                printCurrentField(playingField);
+                printCurrentField(playingField, gameData);
                 playerMove(gameData, playingField);
                 break;
             case '1':
                 printf("\n");
                 playingField->field[gameData->selectedRow][gameData->selectedColumn] = changeTurnPlayerIcon(gameData);
                 playingField->availableFields[gameData->selectedRow][gameData->selectedColumn] = '1';
+                turnOnColoredText(32);
                 printf("%sIcon placed!\n", slashTFormat);
-                printCurrentField(playingField);
+                turnOffAnyColor;
+                printCurrentField(playingField, gameData);
                 playerTurnNegation;
                 break;
             default:
@@ -332,13 +360,17 @@ void playerMove(struct currentGameData *gameData, struct PlayingField *playingFi
     case '0':
         printf("\n");
         playingField->field[gameData->selectedRow][gameData->selectedColumn] = '?';
+        turnOnColoredText(32);
         printf("%sPlace is available!\n", slashTFormat);
-        printCurrentField(playingField);
+        turnOffAnyColor;
+        printCurrentField(playingField, gameData);
         selectConfirmChoice(gameData, playingField, 0);
         break;
     case '1':
+        turnOnColoredText(31);
         printf("%sPlace is unavailable!\n", slashTFormat);
-        printCurrentField(playingField);
+        turnOffAnyColor;
+        printCurrentField(playingField, gameData);
         playerMove(gameData, playingField);
         break;
     }
@@ -368,11 +400,12 @@ void computerMove(struct currentGameData *gameData, struct PlayingField *playing
     {
         srand(time(NULL));
         int randomNumber = rand() % ((iter - 1) - 0 + 1) + 0;
-
+        turnOnColoredText(31);
         printf("%sComputer turn:\n%sRow %d\n%sColumn %d\n", slashTFormat, slashTFormat, availableCoordComputerField[randomNumber][0] + 1, slashTFormat, availableCoordComputerField[randomNumber][1] + 1);
+        turnOffAnyColor;
         playingField->field[availableCoordComputerField[randomNumber][0]][availableCoordComputerField[randomNumber][1]] = gameData->selectedPlayer2Icon;
         playingField->availableFields[availableCoordComputerField[randomNumber][0]][availableCoordComputerField[randomNumber][1]] = '1';
-        printCurrentField(playingField);
+        printCurrentField(playingField, gameData);
         playerTurnNegation;
     } else
     {
@@ -383,10 +416,12 @@ void computerMove(struct currentGameData *gameData, struct PlayingField *playing
 }
 
 
-void printCurrentField(struct PlayingField *playingField)
+void printCurrentField(struct PlayingField *playingField, struct currentGameData *gameData)
 {
+    turnOnColoredText(1);
     printf("%sCurrent play field:\n", slashTFormat);
     printf("%s  ", slashTFormat);
+
     for (int i = 0; i < playingField->rowPlayingField; ++i)
     {
         printf("%d ", i + 1);
@@ -397,10 +432,33 @@ void printCurrentField(struct PlayingField *playingField)
         printf("%s%d ", slashTFormat, i + 1);
         for (int j = 0; j < playingField->rowPlayingField; ++j)
         {
-            printf("%c ", playingField->field[i][j]);
+            if (playingField->field[i][j] == '*')
+            {
+                turnOffAnyColor;
+                turnOnColoredText(33);
+                printf("%c ", playingField->field[i][j]);
+                turnOffAnyColor;
+                turnOnColoredText(1);
+            } else if (playingField->field[i][j] == '?' || playingField->field[i][j] == gameData->selectedPlayer1Icon)
+            {
+                turnOffAnyColor;
+                turnOnColoredText(32);
+                printf("%c ", playingField->field[i][j]);
+                turnOffAnyColor;
+                turnOnColoredText(1);
+            } else
+            {
+                turnOffAnyColor;
+                turnOnColoredText(31);
+                printf("%c ", playingField->field[i][j]);
+                turnOffAnyColor;
+                turnOnColoredText(1);
+            }
+
         }
         printf("\n");
     }
+    turnOffAnyColor;
     printf("\n");
 }
 
@@ -432,20 +490,26 @@ void winMessage(struct currentGameData *gameData, char iconToCheck, char iconCon
     {
         if (iconToCheck == iconCondition)
         {
+            turnOnColoredText(32);
             printf("%sYou win!\n", slashTFormat);
+            turnOffAnyColor;
         } else
         {
             printf("%sComputer win!\n", slashTFormat);
         }
     } else
     {
+
         if (iconToCheck == iconCondition)
         {
+            turnOnColoredText(32);
             printf("%sFirst player win!\n", slashTFormat);
         } else
         {
+            turnOnColoredText(31);
             printf("%sSecond player win!\n", slashTFormat);
         }
+        turnOffAnyColor;
     }
 }
 
@@ -544,7 +608,7 @@ int main()
 
     //start game
     startGreeting();
-    printCurrentField(&playingField);
+    printCurrentField(&playingField, &gameData);
     chooseGameType(&gameData, 0);
     selectIcon(&gameData, 0);
 
@@ -566,12 +630,16 @@ int main()
         {
             if (gameData.playerTurn == 1)
             {
+                turnOnColoredText(32);
                 printf("%sFirst player move!\n", slashTFormat);
+                turnOffAnyColor;
                 playerMove(&gameData, &playingField);
             } else
             {
                 //another player move
-                printf("%Second player move!\n", slashTFormat);
+                turnOnColoredText(31);
+                printf("%sSecond player move!\n", slashTFormat);
+                turnOffAnyColor;
                 playerMove(&gameData, &playingField); // when second player placed his icon the turn goes to first player
             }
         }
@@ -579,7 +647,9 @@ int main()
         checkForEnding(&gameData, &playingField);
 
     }
+    turnOnColoredText(1);
     printf("%sEnd of game!\n", slashTFormat);
+    turnOffAnyColor;
 
     return 0;
 }
