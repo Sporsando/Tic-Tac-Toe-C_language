@@ -351,7 +351,7 @@ void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *
 
 
 
-void playerMove(struct currentGameData *gameData, struct PlayingField *playingField) //this function will be called if this is player1Turn or player2Turn (when game with other player)
+void playerMove(struct currentGameData *gameData, struct PlayingField *playingField)
 {
     selectRow(gameData, playingField, 0);
     selectColumn(gameData, playingField, 0);
@@ -439,20 +439,33 @@ void printCurrentField(struct PlayingField *playingField, struct currentGameData
                 printf("%c ", playingField->field[i][j]);
                 turnOffAnyColor;
                 turnOnColoredText(1);
-            } else if (playingField->field[i][j] == '?' || playingField->field[i][j] == gameData->selectedPlayer1Icon)
-            {
-                turnOffAnyColor;
-                turnOnColoredText(32);
-                printf("%c ", playingField->field[i][j]);
-                turnOffAnyColor;
-                turnOnColoredText(1);
             } else
             {
-                turnOffAnyColor;
-                turnOnColoredText(31);
-                printf("%c ", playingField->field[i][j]);
-                turnOffAnyColor;
-                turnOnColoredText(1);
+                if (playingField->field[i][j] == '?' ||
+                    (gameData->selectedGameType == 2 &&
+                    ((playingField->field[i][j] == gameData->selectedPlayer1Icon && gameData->playerTurn == 1) || (playingField->field[i][j] == gameData->selectedPlayer2Icon && gameData->playerTurn == 0))))
+                {
+                    turnOffAnyColor;
+                    turnOnColoredText(32);
+                    printf("%c ", playingField->field[i][j]);
+                    turnOffAnyColor;
+                    turnOnColoredText(1);
+                } else if (gameData->selectedGameType == 1 && playingField->field[i][j] == gameData->selectedPlayer1Icon)
+                {
+                    turnOffAnyColor;
+                    turnOnColoredText(32);
+                    printf("%c ", playingField->field[i][j]);
+                    turnOffAnyColor;
+                    turnOnColoredText(1);
+                } else
+                {
+                    turnOffAnyColor;
+                    turnOnColoredText(31);
+                    printf("%c ", playingField->field[i][j]);
+                    turnOffAnyColor;
+                    turnOnColoredText(1);
+                }
+
             }
 
         }
@@ -499,14 +512,12 @@ void winMessage(struct currentGameData *gameData, char iconToCheck, char iconCon
         }
     } else
     {
-
+        turnOnColoredText(32);
         if (iconToCheck == iconCondition)
         {
-            turnOnColoredText(32);
             printf("%sFirst player win!\n", slashTFormat);
         } else
         {
-            turnOnColoredText(31);
             printf("%sSecond player win!\n", slashTFormat);
         }
         turnOffAnyColor;
@@ -628,20 +639,20 @@ int main()
             }
         } else //playing with another player
         {
+            turnOnColoredText(32);
             if (gameData.playerTurn == 1)
             {
-                turnOnColoredText(32);
                 printf("%sFirst player move!\n", slashTFormat);
                 turnOffAnyColor;
                 playerMove(&gameData, &playingField);
             } else
             {
                 //another player move
-                turnOnColoredText(31);
                 printf("%sSecond player move!\n", slashTFormat);
                 turnOffAnyColor;
                 playerMove(&gameData, &playingField); // when second player placed his icon the turn goes to first player
             }
+
         }
 
         checkForEnding(&gameData, &playingField);
