@@ -7,6 +7,7 @@
 #define messageSelectCorrectChoice printf("%sSelect correct option (0 or 1)!\n", slashTFormat)
 #define messageSelectCorrectRow printf("%sSelect correct row (1-3)!\n", slashTFormat)
 #define messageSelectCorrectColumn printf("%sSelect correct column (1-3)!\n", slashTFormat)
+#define playerTurnNegation gameData->playerTurn = !gameData->playerTurn
 #define startRecursionIcon messageSelectCorrectIcon; \
                 currentRecursionState += 1; \
                 selectIcon(gameData, currentRecursionState);\
@@ -286,7 +287,7 @@ void selectConfirmChoice(struct currentGameData *gameData, struct PlayingField *
                 playingField->availableFields[gameData->selectedRow][gameData->selectedColumn] = '1';
                 printf("%sIcon placed!\n", slashTFormat);
                 printCurrentField(playingField);
-                gameData->playerTurn = 0;
+                playerTurnNegation;
                 break;
             default:
                 startRecursionConfirmChoice
@@ -343,7 +344,6 @@ void computerMove(struct currentGameData *gameData, struct PlayingField *playing
 
     if (iter != 0)
     {
-
         srand(time(NULL));
         int randomNumber = rand() % ((iter - 1) - 0 + 1) + 0;
 
@@ -351,9 +351,7 @@ void computerMove(struct currentGameData *gameData, struct PlayingField *playing
         playingField->field[availableCoordComputerField[randomNumber][0]][availableCoordComputerField[randomNumber][1]] = gameData->selectedPlayer2Icon;
         playingField->availableFields[availableCoordComputerField[randomNumber][0]][availableCoordComputerField[randomNumber][1]] = '1';
         printCurrentField(playingField);
-
-
-        gameData->playerTurn = 1;
+        playerTurnNegation;
     } else
     {
         printf("cannot move icon by computer\n");
