@@ -417,19 +417,17 @@ void winMessage(int *gameEndBool, char iconToCheck, char iconCondition)
     }
 }
 
-void checkForIdenticIcon(char currentIcon, char anotherIcon, int arrayIterator, int iteratorCondition, int *variableToChange)
+void checkForIdenticIcon(char currentIcon, char anotherIcon, int *variableToChange)
 {
-    if (currentIcon != '*' && arrayIterator != iteratorCondition)
+    if (currentIcon != '*' && currentIcon == anotherIcon)
     {
-        if (currentIcon == anotherIcon)
-        {
-            *variableToChange += 1;
-        }
+        *variableToChange += 1;
     }
 }
 
 void checkForEnding(struct currentGameData *gameData, struct PlayingField *playingField)
 {
+    //Check for draw
     int counterOne = 0;
     for (int i = 0; i < playingField->countRowsPlayingField; ++i)
     {
@@ -457,10 +455,9 @@ void checkForEnding(struct currentGameData *gameData, struct PlayingField *playi
         int columnWin = 0;
         int diagonalWin = 0;
 
-
         for (int j = 0; j < playingField->rowPlayingField; ++j)
         {
-            //there is a block of code to found diagonal win
+
             if (i == 0)
             {
                 diagonalWinArray[j] = playingField->field[j][j];
@@ -468,14 +465,14 @@ void checkForEnding(struct currentGameData *gameData, struct PlayingField *playi
             {
                 diagonalWinArray[j] = playingField->field[playingField->rowPlayingField - 1 - j][j];
             }
-            checkForIdenticIcon(diagonalWinArray[j], diagonalWinArray[j-1], j, 0, &diagonalWin);
+            columnWinArray[j] = playingField->field[j][i];
+            if (j != 0)
+            {
+                checkForIdenticIcon(diagonalWinArray[j], diagonalWinArray[j-1], &diagonalWin); //check for diagonal win
+                checkForIdenticIcon(columnWinArray[j], columnWinArray[j-1], &columnWin); //check for column win
+                checkForIdenticIcon(playingField->field[i][j], playingField->field[i][j-1], &rowWin); //check for row win
+            }
 
-            //there is a block of code to found column win
-            columnWinArray[j] = playingField->field[j][i]; // here I make a decision to not accept not squared matrix
-            checkForIdenticIcon(columnWinArray[j], columnWinArray[j-1], j, 0, &columnWin);
-
-            //there is a block of code to found row win
-            checkForIdenticIcon(playingField->field[i][j], playingField->field[i][j+1], j, playingField->rowPlayingField - 1, &rowWin);
 
         }
 
