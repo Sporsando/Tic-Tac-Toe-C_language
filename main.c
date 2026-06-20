@@ -415,6 +415,12 @@ void computerMove(struct currentGameData *gameData, struct PlayingField *playing
 
 }
 
+void printColoredCharacter(char characterToPrint, int ansiColorCode)
+{
+    turnOnColoredText(ansiColorCode);
+    printf("%c ", characterToPrint);
+    turnOffAnyColor;
+}
 
 void printCurrentField(struct PlayingField *playingField, struct currentGameData *gameData)
 {
@@ -432,41 +438,25 @@ void printCurrentField(struct PlayingField *playingField, struct currentGameData
         printf("%s%d ", slashTFormat, i + 1);
         for (int j = 0; j < playingField->rowPlayingField; ++j)
         {
+            turnOffAnyColor;
             if (playingField->field[i][j] == '*')
             {
-                turnOffAnyColor;
-                turnOnColoredText(33);
-                printf("%c ", playingField->field[i][j]);
-                turnOffAnyColor;
-                turnOnColoredText(1);
+                printColoredCharacter(playingField->field[i][j], 33);
             } else
             {
                 if (playingField->field[i][j] == '?' ||
                     (gameData->selectedGameType == 2 &&
-                    ((playingField->field[i][j] == gameData->selectedPlayer1Icon && gameData->playerTurn == 1) || (playingField->field[i][j] == gameData->selectedPlayer2Icon && gameData->playerTurn == 0))))
+                    ((playingField->field[i][j] == gameData->selectedPlayer1Icon && gameData->playerTurn == 1) || (playingField->field[i][j] == gameData->selectedPlayer2Icon && gameData->playerTurn == 0))) ||
+                    (gameData->selectedGameType == 1 && playingField->field[i][j] == gameData->selectedPlayer1Icon))
                 {
-                    turnOffAnyColor;
-                    turnOnColoredText(32);
-                    printf("%c ", playingField->field[i][j]);
-                    turnOffAnyColor;
-                    turnOnColoredText(1);
-                } else if (gameData->selectedGameType == 1 && playingField->field[i][j] == gameData->selectedPlayer1Icon)
-                {
-                    turnOffAnyColor;
-                    turnOnColoredText(32);
-                    printf("%c ", playingField->field[i][j]);
-                    turnOffAnyColor;
-                    turnOnColoredText(1);
+                    printColoredCharacter(playingField->field[i][j], 32);
                 } else
                 {
-                    turnOffAnyColor;
-                    turnOnColoredText(31);
-                    printf("%c ", playingField->field[i][j]);
-                    turnOffAnyColor;
-                    turnOnColoredText(1);
+                    printColoredCharacter(playingField->field[i][j], 31);
                 }
 
             }
+            turnOnColoredText(1);
 
         }
         printf("\n");
