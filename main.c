@@ -60,13 +60,14 @@ const char slashTFormat[] = "\t\t";
 
 typedef struct currentGameData
 {
-    int selectedGameType;
+    char playerTurn; // bool
+    char gameEnd; // bool
     char selectedPlayer1Icon;
     char selectedPlayer2Icon;
-    int playerTurn; // bool
+    int selectedGameType;
     int selectedRow;
     int selectedColumn;
-    int gameEnd; // bool
+
 
 };
 
